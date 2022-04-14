@@ -158,3 +158,80 @@ void level3()
   if(result == 0) {lost();}
   else if(result == 1) {won();}
 }
+
+
+------------------------------
+//valeri-random
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(2,3,4,5,6,7);
+byte dinosaurio[8]={
+  B00111,
+  B10111,
+  B10110,
+  B11111,
+  B11110,
+  B01110,
+  B01000,
+  B01100  
+};
+byte cactus[8]={
+  B00110,
+  B10110,
+  B10110,
+  B11110,
+  B11110,
+  B00110,
+  B00110,
+  B11111
+};
+int boton=8;
+//long r = random(3,6);
+int positions[5];
+void scroll(){
+  lcd.scrollDisplayLeft();
+}
+
+void setup()
+{
+  lcd.begin(16,2);
+  lcd.createChar(0,dinosaurio);
+  lcd.createChar(1,cactus);
+  Serial.begin(9600);
+  pinMode(boton,INPUT);
+}
+void loop()
+{
+  for(int i=15; i<-1;i--){
+    dino();
+    for(int i=2; i<random(3,6); i++){
+      scroll();
+      dino();
+      delay(300);
+    }
+    lcd.setCursor(15,1);
+    lcd.write(byte(1));
+  }
+
+}
+void dino(){
+  int valor=digitalRead(boton);
+  Serial.println(valor);
+  if(digitalRead(boton)==0){
+    lcd.setCursor(4,0);
+    lcd.write(byte(0));
+    lcd.setCursor(4,1);
+    lcd.print(" ");
+    delay(700);
+    lcd.setCursor(4,1);
+    lcd.write(byte(0));
+    lcd.setCursor(4,0);
+    lcd.print(" ");
+  }
+  else{
+    lcd.setCursor(4,1);
+    lcd.write(byte(0));
+    lcd.setCursor(4,0);
+    lcd.print(" ");
+  }
+}
