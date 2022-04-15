@@ -1,9 +1,15 @@
 #include <LiquidCrystal.h>
 
+int result = 1, car1Pos = 4, car2Pos= 3, carRow = 0, c1Pos = 15, potPosition = 3;
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-int potPosition = 3, gameStarted = 0, result = 0;
+int gameStarted = 0;
 const int buttonPin = 8;
-
+int taken[40][2];
+//Стрелка
+byte ch[8]={B00000, B00010, 
+              B00110, B01110, 
+              B01110, B00110,
+              B00010, B00000};
 //Иконка на играч
 //Задна част
 byte player1[8] = {
@@ -102,7 +108,11 @@ byte truck2[8] = {
 
 void setup() {
   lcd.begin(16, 2);
-  
+   for(int i = 0; i <=39; i++)
+  {
+    taken[i][0] = 0; taken[i][1]=0;
+  }
+
   //Създаване на иконките
   lcd.createChar(1, player1);
   lcd.createChar(2, player2);
@@ -119,8 +129,8 @@ void setup() {
 
 void loop() {
   if(gameStarted == 0) {begin();}
-  else if (potPosition == 3) {level1();}
-  else if(potPosition == 2) {level2();}
+  else if (potPosition >=683) {level1();}
+  else if(potPosition >=342) {level2();}
   else {level3();}
 }
 //Начален екран за избиране на ниво
@@ -157,6 +167,8 @@ void begin()
 //Загуба
 void lost()
 {
+  car1Pos = 4, car2Pos= 3, carRow = 0, c1Pos = 15;
+  result = 1;
   delay(1000);
   lcd.clear();
   lcd.setCursor(4,0);
@@ -193,11 +205,7 @@ void won()
 //Рестарт или друго ниво
 void choice()
 {
-  byte ch[8]={B00000, B00010, 
-              B00110, B01110, 
-              B01110, B00110,
-              B00010, B00000};
-  lcd.createChar(10, ch);
+  lcd.createChar(1, ch);
   delay(1000);
   lcd.clear();
   lcd.setCursor(0,0);
@@ -211,7 +219,7 @@ void choice()
     if(potPosition <512)
     {
       lcd.setCursor(15,0);
-      lcd.write(10);
+      lcd.write(1);
       lcd.setCursor(0,0);
       lcd.print("             ");
       delay(500);
@@ -223,7 +231,7 @@ void choice()
     {
       gameStarted = 0;
       lcd.setCursor(15,1);
-      lcd.write(10);
+      lcd.write(1);
       lcd.setCursor(0,1);
       lcd.print("              ");
       delay(500);
@@ -236,17 +244,45 @@ void choice()
     lcd.setCursor(15,1);
     lcd.print(" ");
   }
+  lcd.createChar(1, player1);
   delay(1000);
+}
+void scroll(){
+  lcd.scrollDisplayLeft();
 }
 //Първо ниво
 void level1()
 {
   lcd.clear();
+  while(result == 1){
+    for(int q=2; q<random(7,12); q++){
+      scroll();
+      car();
+      delay(300);
+      if(c1Pos == 39) {c1Pos = 0;}
+      else {c1Pos++;}
+
+    if(taken[car1Pos][carRow] == 1){result =0; }
+    if(taken[car2Pos][carRow] == 1){result=0;}
+    }
+  int type = random(0,15);
   
-  //първо ниво код
+  int row = random(0,2);
+    lcd.setCursor(c1Pos,row);
+    if(type<=4) {type = 0;}
+    else if(type<=9) {type=1;}
+    else {type = 2;}
+   lcd.write(3+type*2);
+  int c2Pos = 0;
+  if(c1Pos==39) {c2Pos = 0;}
+  else {c2Pos = c1Pos + 1;}
+  lcd.setCursor(c2Pos, row);
+  lcd.write(3+type*2+1);
   
-  if(result == 0) {lost();}
-  else if(result == 1) {won();}
+  taken[c1Pos][row] = 1;
+  taken[c2Pos][row] = 1;
+  }
+  lost();
 }
 //Второ ниво
 void level2()
@@ -264,78 +300,220 @@ void level3()
   if(result == 0) {lost();}
   else if(result == 1) {won();}
 }
-
+void car(){
+  potPosition = analogRead(A0);
+  if(potPosition <=500){
+    lcd.setCursor(car2Pos,0);
+    lcd.write(1);
+    if(car2Pos==39) {car1Pos = 0;}
+  else {car1Pos = car2Pos + 1;}
+    lcd.setCursor(car2Pos+1,0);
+    lcd.write(2);
+    carRow = 0;
+  }
+  else{
+    lcd.setCursor(car2Pos,1);
+    lcd.write(1);
+    if(car2Pos==39) {car1Pos = 0;}
+  else {car1Pos = car2Pos + 1;}
+    lcd.setCursor(car1Pos,1);
+    lcd.write(2);
+    carRow = 1;
+  }
+  if(car2Pos==0){lcd.setCursor(39,0); lcd.print(" "); 
+                lcd.setCursor(39,1); lcd.print(" ");
+                taken[39][0]=0; taken[39][1] =0;}
+    else {lcd.setCursor(car2Pos-1,0); lcd.print(" ");
+         lcd.setCursor(car2Pos-1,1); lcd.print(" ");
+         taken[car2Pos-1][0]=0;taken[car2Pos-1][1]=0;}
+  if(car2Pos == 39) {car2Pos = 0;}
+  else car2Pos++;
+}
 
 ------------------------------
-//valeri-random
 #include <LiquidCrystal.h>
-int dinPos = 3, c1Pos = 15, potPosition = 3;
+
+int result = 1, car1Pos = 4, car2Pos= 3, carRow = 0, c1Pos = 15, potPosition = 3;
+
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-byte dinosaurio[8]={
+//Иконка на играч
+//Задна част
+byte player1[8] = {
+  B00000,
+  B00000,
   B00111,
-  B10111,
-  B10110,
+  B01001,
   B11111,
-  B11110,
-  B01110,
-  B01000,
-  B01100  
+  B11111,
+  B00110,
+  B00000
 };
-byte cactus[8]={
+//Предна част
+byte player2[8] = {
+  B00000,
+  B00000,
+  B11000,
+  B00100,
+  B11111,
+  B11111,
   B00110,
-  B10110,
-  B10110,
+  B0000
+};
+
+//Иконка кола
+//Предна част
+byte car1[8] = {
+  B00000,
+  B00000,
+  B00011,
+  B00100,
+  B11111,
+  B11111,
+  B01100,
+  B00000
+};
+//Задна част
+byte car2[8] = {
+  B00000,
+  B00000,
+  B11100,
+  B10010,
+  B11111,
+  B11111,
+  B01100,
+  B00000
+};
+
+//Иконка мотор
+//Предна част
+byte bike1[8] = {
+  B00000,
+  B00000,
+  B00001,
+  B00010,
+  B00110,
+  B01101,
+  B01100,
+  B00000
+};
+//Задна част
+byte bike2[8] = {
+  B00000,
+  B00000,
+  B00000,
+  B00110,
+  B11100,
+  B11011,
+  B00011,
+  B00000
+};
+
+//Иконка камион
+//Предна част
+byte truck1[8] = {
+  B00000,
+  B00010,
+  B00110,
+  B01010,
   B11110,
-  B11110,
+  B11111,
+  B01100,
+  B00000
+};
+//Задна част
+byte truck2[8] = {
+  B00000,
+  B11111,
+  B11111,
+  B11111,
+  B11111,
+  B11111,
   B00110,
-  B00110,
-  B11111
+  B00000
 };
 const int boton=8;
-//long r = random(3,6);
-//int positions[5];
 void scroll(){
   lcd.scrollDisplayLeft();
 }
 
+int taken[40][2];
+
 void setup()
 {
+  for(int i = 0; i <=39; i++)
+  {
+    taken[i][0] = 0; taken[i][1]=0;
+  }
   lcd.begin(16,2);
-  lcd.createChar(1,dinosaurio);
-  lcd.createChar(2,cactus);
+    //Създаване на иконките
+  lcd.createChar(1, player1);
+  lcd.createChar(2, player2);
+  lcd.createChar(3, car1);
+  lcd.createChar(4, car2);
+  lcd.createChar(5, bike1);
+  lcd.createChar(6, bike2);
+  lcd.createChar(7, truck1);
+  lcd.createChar(8, truck2);
+  
   Serial.begin(9600);
   pinMode(boton,INPUT);
 }
 void loop()
 {
-    for(int q=2; q<random(7,11); q++){
+  if(result == 1){
+    for(int q=2; q<random(7,12); q++){
       scroll();
-      dino();
+      car();
       delay(300);
       if(c1Pos == 39) {c1Pos = 0;}
-  else c1Pos++;
-    }
-  
-    lcd.setCursor(c1Pos,random(0,2));
-   lcd.write(2);
-    
-  //}
+      else {c1Pos++;}
 
+    if(taken[car1Pos][carRow] == 1){result =0; }
+    if(taken[car2Pos][carRow] == 1){result=0;}
+    }
+  int type = random(0,3);
+  
+  int row = random(0,2);
+    lcd.setCursor(c1Pos,row);
+   lcd.write(3+type*2);
+  int c2Pos = 0;
+  if(c1Pos==39) {c2Pos = 0;}
+  else {c2Pos = c1Pos + 1;}
+  lcd.setCursor(c2Pos, row);
+  lcd.write(3+type*2+1);
+  
+  taken[c1Pos][row] = 1;
+  taken[c2Pos][row] = 1;
+  
+  }
+  else {lcd.clear();lcd.setCursor(0,0); lcd.print("F");}
 }
-void dino(){
+void car(){
   potPosition = analogRead(A0);
   if(potPosition <=500){
-    lcd.setCursor(dinPos,0);
+    lcd.setCursor(car2Pos,0);
     lcd.write(1);
+    if(car2Pos==39) {car1Pos = 0;}
+  else {car1Pos = car2Pos + 1;}
+    lcd.setCursor(car2Pos+1,0);
+    lcd.write(2);
+    carRow = 0;
   }
   else{
-    lcd.setCursor(dinPos,1);
+    lcd.setCursor(car2Pos,1);
     lcd.write(1);
+    if(car2Pos==39) {car1Pos = 0;}
+  else {car1Pos = car2Pos + 1;}
+    lcd.setCursor(car1Pos,1);
+    lcd.write(2);
+    carRow = 1;
   }
-  if(dinPos==0){lcd.setCursor(39,0); lcd.print(" "); 
-                lcd.setCursor(39,1); lcd.print(" ");}
-    else {lcd.setCursor(dinPos-1,0); lcd.print(" ");
-         lcd.setCursor(dinPos-1,1); lcd.print(" ");}
-  if(dinPos == 39) {dinPos = 0;}
-  else dinPos++;
+  if(car2Pos==0){lcd.setCursor(39,0); lcd.print(" "); 
+                lcd.setCursor(39,1); lcd.print(" ");
+                taken[39][0]=0; taken[39][1] =0;}
+    else {lcd.setCursor(car2Pos-1,0); lcd.print(" ");
+         lcd.setCursor(car2Pos-1,1); lcd.print(" ");
+         taken[car2Pos-1][0]=0;taken[car2Pos-1][1]=0;}
+  if(car2Pos == 39) {car2Pos = 0;}
+  else car2Pos++;
 }
