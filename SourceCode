@@ -131,16 +131,16 @@ void begin()
   lcd.print("Choose a level");
   while(digitalRead(buttonPin) == HIGH){
   potPosition = analogRead(A0);
-  potPosition = map(potPosition, 0, 1023, 1, 3);
+  //potPosition = map(potPosition, 0, 1023, 1, 3);
   lcd.setCursor(6, 1);
   lcd.print("1 2 3");
   delay(500);
-  if(potPosition==3)
+  if(potPosition>=683)
   {
     lcd.setCursor(6, 1);
     lcd.print(" ");
   }
-  else if(potPosition==2)
+  else if(potPosition>=342)
   {
 	lcd.setCursor(8, 1);
     lcd.print(" ");
@@ -207,8 +207,8 @@ void choice()
   while(digitalRead(buttonPin)==HIGH)
   {
     potPosition = analogRead(A0);
-    potPosition = map(potPosition, 0, 1023, 1, 2);
-    if(potPosition == 1)
+    //potPosition = map(potPosition, 0, 1023, 1, 2);
+    if(potPosition <512)
     {
       lcd.setCursor(15,0);
       lcd.write(10);
