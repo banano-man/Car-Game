@@ -1,6 +1,6 @@
 #include <LiquidCrystal.h>
 
-int result = 1, car1Pos = 4, car2Pos= 3, carRow = 0, c1Pos = 15, potPosition = 3;
+int level = 0, result = 1, car1Pos = 4, car2Pos= 3, carRow = 0, c1Pos = 15, potPosition = 3;
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int gameStarted = 0;
 const int buttonPin = 8;
@@ -129,7 +129,10 @@ void setup() {
 
 void loop() {
   if(gameStarted == 0) {begin();}
-  else if (potPosition >=683) {level1();}
+  else if (level == 1) {level1();}
+  else if(level ==2) {level2();}
+  else if(level == 3) {level3();}
+  else if(potPosition >=683) {level1();}
   else if(potPosition >=342) {level2();}
   else {level3();}
 }
@@ -167,8 +170,7 @@ void begin()
 //Загуба
 void lost()
 {
-  car1Pos = 4, car2Pos= 3, carRow = 0, c1Pos = 15;
-  result = 1;
+  
   delay(1000);
   lcd.clear();
   lcd.setCursor(4,0);
@@ -205,6 +207,12 @@ void won()
 //Рестарт или друго ниво
 void choice()
 {
+  car1Pos = 4, car2Pos= 3, carRow = 0, c1Pos = 15;
+  result = 1;
+    for(int i = 0; i <=39; i++)
+  {
+    taken[i][0] = 0; taken[i][1]=0;
+  }
   lcd.createChar(1, ch);
   delay(1000);
   lcd.clear();
@@ -229,6 +237,7 @@ void choice()
     }
     else
     {
+      level = 0;
       gameStarted = 0;
       lcd.setCursor(15,1);
       lcd.write(1);
@@ -284,6 +293,7 @@ void level1()
   taken[c1Pos][row] = 1;
   taken[c2Pos][row] = 1;
   }
+  level = 1;
   lost();
 }
 //Второ ниво
@@ -320,6 +330,7 @@ void level2()
   taken[c1Pos][row] = 1;
   taken[c2Pos][row] = 1;
   }
+  level = 2;
   lost();
 }
 //Трето ниво
@@ -356,6 +367,7 @@ void level3()
   taken[c1Pos][row] = 1;
   taken[c2Pos][row] = 1;
   }
+  level = 3;
   lost();
 }
 void car(){
