@@ -264,10 +264,12 @@ void level1()
 {
   lcd.clear();
   while(result == 1){
+    int finish = 0;
     for(int q=2; q<random(7,12); q++){
       scroll();
       car();
-      delay(300);
+      finish++;
+      delay(400);
       if(c1Pos == 39) {c1Pos = 0;}
       else {c1Pos++;}
 
@@ -292,7 +294,14 @@ void level1()
   
   taken[c1Pos][row] = 1;
   taken[c2Pos][row] = 1;
+    if(finish==20){break;}
   }
+  delay(300);
+  lcd.createChar(8, finish);
+  for(int a=0; a<10; a++){scroll();}
+  //
+  won();
+  lcd.createChar(8, truck2);
   level = 1;
   lost();
 }
