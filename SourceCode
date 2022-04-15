@@ -267,10 +267,12 @@ void level1()
     }
   int type = random(0,15);
   
-  int row = random(0,2);
+  int row = random(0,10);
+    if(row<5){row=0;}
+    else{row=1;}
     lcd.setCursor(c1Pos,row);
-    if(type<=4) {type = 0;}
-    else if(type<=9) {type=1;}
+    if(type<5) {type = 0;}
+    else if(type<10) {type=1;}
     else {type = 2;}
    lcd.write(3+type*2);
   int c2Pos = 0;
@@ -288,17 +290,73 @@ void level1()
 void level2()
 {
   lcd.clear();
-  //второ ниво код
-  if(result == 0) {lost();}
-  else if(result == 1) {won();}
+  while(result == 1){
+    for(int q=2; q<random(7,12); q++){
+      scroll();
+      car();
+      delay(300);
+      if(c1Pos == 39) {c1Pos = 0;}
+      else {c1Pos++;}
+
+    if(taken[car1Pos][carRow] == 1){result =0; }
+    if(taken[car2Pos][carRow] == 1){result=0;}
+    }
+  int type = random(15,45);
+  
+  int row = random(10,20);
+    if(row<15){row=0;}
+    else{row=1;}
+    lcd.setCursor(c1Pos,row);
+    if(type<25) {type = 0;}
+    else if(type<35) {type=1;}
+    else {type = 2;}
+   lcd.write(3+type*2);
+  int c2Pos = 0;
+  if(c1Pos==39) {c2Pos = 0;}
+  else {c2Pos = c1Pos + 1;}
+  lcd.setCursor(c2Pos, row);
+  lcd.write(3+type*2+1);
+  
+  taken[c1Pos][row] = 1;
+  taken[c2Pos][row] = 1;
+  }
+  lost();
 }
 //Трето ниво
 void level3()
 {
   lcd.clear();
-  //трето ниво код
-  if(result == 0) {lost();}
-  else if(result == 1) {won();}
+  while(result == 1){
+    for(int q=2; q<random(7,12); q++){
+      scroll();
+      car();
+      delay(300);
+      if(c1Pos == 39) {c1Pos = 0;}
+      else {c1Pos++;}
+
+    if(taken[car1Pos][carRow] == 1){result =0; }
+    if(taken[car2Pos][carRow] == 1){result=0;}
+    }
+  int type = random(30,45);
+  
+  int row = random(20,30);
+    if(row<25){row=0;}
+    else{row=1;}
+    lcd.setCursor(c1Pos,row);
+    if(type<35) {type = 0;}
+    else if(type<40) {type=1;}
+    else {type = 2;}
+   lcd.write(3+type*2);
+  int c2Pos = 0;
+  if(c1Pos==39) {c2Pos = 0;}
+  else {c2Pos = c1Pos + 1;}
+  lcd.setCursor(c2Pos, row);
+  lcd.write(3+type*2+1);
+  
+  taken[c1Pos][row] = 1;
+  taken[c2Pos][row] = 1;
+  }
+  lost();
 }
 void car(){
   potPosition = analogRead(A0);
