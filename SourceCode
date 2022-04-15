@@ -274,9 +274,10 @@ void scroll(){
 //Първо ниво
 void level1()
 {
+ int check = 0;
   lcd.clear();
+  int finish = 0, wanted = 0;
   while(result == 1){
-    int finish = 0;
     for(int q=2; q<random(7,12); q++){
       scroll();
       car();
@@ -284,12 +285,12 @@ void level1()
       delay(400);
       if(c1Pos == 39) {c1Pos = 0;}
       else {c1Pos++;}
-
+      if(finish==wanted){check = 1;break;}
     if(taken[car1Pos][carRow] == 1){result =0; }
     if(taken[car2Pos][carRow] == 1){result=0;}
-    }
+    } 
+      if(finish<=20){
   int type = random(0,15);
-  
   int row = random(0,10);
     if(row<5){row=0;}
     else{row=1;}
@@ -306,16 +307,36 @@ void level1()
   
   taken[c1Pos][row] = 1;
   taken[c2Pos][row] = 1;
-    if(finish==20){break;}
+    }
+    else if(finish<=26){
+      lcd.createChar(8, flag);
+        if(car1Pos+13<=39)
+      {
+        wanted = car1Pos + 13;
+      lcd.setCursor(car1Pos+13,0);
+        lcd.write(8);
+        lcd.setCursor(car1Pos+13,1);
+        lcd.write(8);
+      }
+      else 
+      {
+        wanted = car1Pos+13-39;
+        lcd.setCursor(car1Pos+13-39,0);
+        lcd.write(8);
+        lcd.setCursor(car1Pos+13-39,1);
+        lcd.write(8);
+      }
+    }
+    else if(check==1){result = 2;}
   }
   delay(300);
-  lcd.createChar(8, finish);
-  for(int a=0; a<10; a++){scroll();}
-  //
-  won();
   lcd.createChar(8, truck2);
   level = 1;
-  lost();
+  if(result==2){
+    won();}
+  
+  if(result == 0){
+    lost();}
 }
 //Второ ниво
 void level2()
