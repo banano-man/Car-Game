@@ -1,5 +1,5 @@
 #include <LiquidCrystal.h>
-
+//valeri beshe tuk
 int level = 0, result = 1, car1Pos = 4, car2Pos = 3, carRow = 0, c1Pos = 15, potPosition = 3;
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int gameStarted = 0;
